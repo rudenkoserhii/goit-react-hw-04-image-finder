@@ -67,22 +67,22 @@ export const App = () => {
   };
 
     return (
-<BrowserRouter >
-      <main className="App">
-        <Searchbar onSubmit={onSubmit}/>
-        <Wrap>
+      <BrowserRouter >
+        <main className="App">
+          <Searchbar onSubmit={onSubmit}/>
+          <Wrap>
 
-          {(status === Status.RESOLVED) && (<>
-            <ImageGallery images={images} toggleModal={toggleModal}/>
-              { (page < total ) &&
-              <><ScrollToBottom/><Button onSubmit={onSubmit} page={page} searchValue={searchValue}/></>}
-            </>)}
-          {(status === Status.PENDING) && <Loader/>}
-          {(status === Status.REJECTED) && <ErrorMessage>{error.message}</ErrorMessage>}
-          {(showModal) && <Modal selectedId={selectedId} images={images} onClose={toggleModal}/>}
-        </Wrap>
-      </main>
-</BrowserRouter>
+            {(status === Status.RESOLVED) && (<>
+              <ImageGallery images={images} toggleModal={toggleModal}/>
+                { (page < total ) &&
+                <><ScrollToBottom/><Button onSubmit={onSubmit} page={page} searchValue={searchValue}/></>}
+              </>)}
+            {(status === Status.PENDING) && <Loader/>}
+            {(status === Status.REJECTED) && <ErrorMessage>{error.message}</ErrorMessage>}
+            {(showModal) && <Modal selectedId={selectedId} images={images} onClose={toggleModal}/>}
+          </Wrap>
+        </main>
+      </BrowserRouter>
   )
 }
 
