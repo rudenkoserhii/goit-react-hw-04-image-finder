@@ -26,14 +26,16 @@ export const App = () => {
   const [selectedId, setSelectedId] = useState(0);
   const [total, setTotal] = useState(0);
 
-  useEffect(() => {
+  useEffect( () => {
+
+    async function fetchImages () {
       if (!searchValue) {
         return;
       }
 
       setStatus(Status.PENDING);
 
-      fetchAPI(page, searchValue)
+      await fetchAPI(page, searchValue)
         .then(responce => {
           if (responce.total === 0) {
             return Promise.reject(new Error(`No pictures with word "${searchValue}"`))
@@ -50,6 +52,8 @@ export const App = () => {
     window.scrollTo({
       top: document.documentElement.scrollHeight,
       behavior: 'smooth',})
+    };
+    fetchImages ()
   }, [searchValue, page]);
 
 
