@@ -6,9 +6,8 @@ import { Button } from './Button/Button';
 import { Modal } from './Modal/Modal';
 import { Wrap, ErrorMessage } from './App.styled';
 import fetchAPI from './API/API';
-import ScrollToBottom from './Button/Button'
+import ScrollToBottom from './ScrollToBottom/ScrollToBottom'
 import { BrowserRouter } from 'react-router-dom';
-
 
 const Status = {
     IDLE: 'idle',
@@ -45,7 +44,7 @@ export const App = () => {
         })
         .catch(error => {
           setError(error);
-          setError(Status.REJECTED);
+          setStatus(Status.REJECTED);
         });
     
     window.scrollTo({

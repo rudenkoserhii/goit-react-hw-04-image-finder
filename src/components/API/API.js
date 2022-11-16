@@ -10,7 +10,7 @@ const fetchAPI = (currentPage, nextValue) => {
         if (response.ok) {
         return response.json();
         }
-        return Promise.reject(new Error());
+        return Promise.reject(new Error('Error'));
         })
 
 }

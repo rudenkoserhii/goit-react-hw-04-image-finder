@@ -1,7 +1,5 @@
 import { ButtonStyled } from './Button.styled'
 import PropTypes from 'prop-types';
-import { useLocation } from 'react-router-dom';
-import { useEffect } from 'react';
 
 export const Button = ({ onSubmit, page, searchValue }) => {
 
@@ -20,14 +18,4 @@ Button.propTypes = {
     searchValue: PropTypes.string.isRequired,
     page: PropTypes.number.isRequired,
     onSubmit: PropTypes.func.isRequired,
-}
-
-export default function ScrollToBottom() {
-  const { pathname } = useLocation();
-
-  useEffect(() => {
-    window.scrollTo(0, document.documentElement.scrollHeight);
-  }, [pathname]);
-
-  return null;
 }

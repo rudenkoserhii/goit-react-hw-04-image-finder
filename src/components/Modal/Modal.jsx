@@ -1,10 +1,12 @@
 import { useEffect } from "react";
 import { createPortal } from "react-dom";
 import { ModalStyled, Overlay } from './Modal.styled'
+import PropTypes from 'prop-types';
+
 
 const modalRoot = document.querySelector('#modal-root');
 
-export const Modal = ( { selectedId, images, onClose }) => {
+export const Modal = ({ selectedId, images, onClose }) => {
 
     useEffect(() => {
     if (window){
@@ -36,3 +38,9 @@ export const Modal = ( { selectedId, images, onClose }) => {
         </Overlay>, modalRoot,
 
 )}
+
+Modal.propTypes = {
+    selectedId: PropTypes.number.isRequired,
+    images: PropTypes.arrayOf(PropTypes.object).isRequired,
+    onClose: PropTypes.func.isRequired,
+}
