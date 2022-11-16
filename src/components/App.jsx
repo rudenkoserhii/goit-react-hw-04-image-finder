@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { useState, useEffect } from 'react';
 import { Searchbar } from './Searchbar/Searchbar'
 import { ImageGallery } from './ImageGallery/ImageGallery';
 import { Loader } from './Loader/Loader';
@@ -6,6 +6,9 @@ import { Button } from './Button/Button';
 import { Modal } from './Modal/Modal';
 import { Wrap, ErrorMessage } from './App.styled';
 import fetchAPI from './API/API';
+import ScrollToBottom from './Button/Button'
+import { BrowserRouter } from 'react-router-dom';
+
 
 const Status = {
     IDLE: 'idle',
@@ -14,74 +17,72 @@ const Status = {
     REJECTED: 'rejected',}
 
 
-export class App extends Component {
-  state = {
-    images: [],
-    error: null,
-    status: Status.IDLE,
-    searchValue: '',
-    page: 0,
-    showModal: false,
-    selectedId: 0,
-    total: 0,
-  };
+export const App = () => {
+  const [images, setImages] = useState([]);
+  const [error, setError] = useState(null);
+  const [status, setStatus] = useState(Status.IDLE);
+  const [searchValue, setSearchValue] = useState('');
+  const [page, setPage] = useState(0);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedId, setSelectedId] = useState(0);
+  const [total, setTotal] = useState(0);
 
-  componentDidUpdate(_, prevState) {
-    const prevValue = prevState.searchValue;
-    const nextValue = this.state.searchValue;
-    const prevPage = prevState.page;
-    const currentPage = this.state.page;
+  useEffect(() => {
+      if (!searchValue) {
+        return;
+      }
 
-    if (prevValue !== nextValue || prevPage !== currentPage) {
-      this.setState({ status: Status.PENDING });
+      setStatus(Status.PENDING);
 
-      fetchAPI(currentPage, nextValue)
+      fetchAPI(page, searchValue)
         .then(responce => {
           if (responce.total === 0) {
-            return Promise.reject(new Error(`No pictures with word "${this.state.searchValue}"`))
+            return Promise.reject(new Error(`No pictures with word "${searchValue}"`))
           }
-
-          return this.setState({ 
-              total: Math.ceil(responce.total / 12),
-              images: ((prevValue !== nextValue) ? ([...responce.hits]) : ([...prevState.images, ...responce.hits])),
-              status: Status.RESOLVED });
+            setTotal(Math.ceil(responce.total / 12));
+            setImages(i=>{return ((page === 1) ? ([...responce.hits]) : ([...i, ...responce.hits]))});
+            setStatus(Status.RESOLVED);
         })
-        .catch(error => {this.setState({ error, status: Status.REJECTED })
+        .catch(error => {
+          setError(error);
+          setError(Status.REJECTED);
         });
-    };
+    
     window.scrollTo({
       top: document.documentElement.scrollHeight,
-      behavior: 'smooth',
-    });
-  }
+      behavior: 'smooth',})
+  }, [searchValue, page]);
+
+
 
   
-  onSubmit = (value, page) => {
-    this.setState({searchValue: value, page: page });
+  const onSubmit = (value, page) => {
+    setSearchValue(value);
+    setPage(page);
   }
 
-  toggleModal = (id) => {
-    this.setState(({ showModal }) => ({ showModal: !showModal, selectedId: id }));
+  const toggleModal = (id) => {
+    setShowModal(!showModal);
+    setSelectedId(id);
   };
 
-  render() {
-    const { images, error, status, showModal, selectedId, page, searchValue, total} = this.state;
-
     return (
+<BrowserRouter >
       <main className="App">
-        <Searchbar onSubmit={this.onSubmit}/>
+        <Searchbar onSubmit={onSubmit}/>
         <Wrap>
 
           {(status === Status.RESOLVED) && (<>
-            <ImageGallery images={images} toggleModal={this.toggleModal}/>
+            <ImageGallery images={images} toggleModal={toggleModal}/>
               { (page < total ) &&
-              <Button onSubmit={this.onSubmit} page={page} searchValue={searchValue}/>}
+              <><ScrollToBottom/><Button onSubmit={onSubmit} page={page} searchValue={searchValue}/></>}
             </>)}
           {(status === Status.PENDING) && <Loader/>}
           {(status === Status.REJECTED) && <ErrorMessage>{error.message}</ErrorMessage>}
-          {(showModal) && <Modal selectedId={selectedId} images={images} onClose={this.toggleModal}/>}
+          {(showModal) && <Modal selectedId={selectedId} images={images} onClose={toggleModal}/>}
         </Wrap>
       </main>
-  )}
+</BrowserRouter>
+  )
 }
 
