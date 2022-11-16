@@ -1,39 +1,38 @@
-import { Component } from "react";
+import { useEffect } from "react";
 import { createPortal } from "react-dom";
 import { ModalStyled, Overlay } from './Modal.styled'
 
 const modalRoot = document.querySelector('#modal-root');
 
-export class Modal extends Component {
+export const Modal = ( { selectedId, images, onClose }) => {
 
-    componentDidMount() {
-        window.addEventListener('keydown', this.onClickEscape)
+    useEffect(() => {
+    if (window){
+        window.addEventListener('keydown', onClickEscape);
     }
+    return () => {
+        window.removeEventListener('keydown', onClickEscape);
+    }}, )
 
-    componentWillUnmount() {
-        window.removeEventListener('keydown', this.onClickEscape)
-    }
-
-    onClickEscape = (e) => {
+    const onClickEscape = (e) => {
         if(e.code === 'Escape') {
-        this.props.onClose();
+        onClose();
         }
     }
 
-    onClickBackdrop = (e) => {
+    const onClickBackdrop = (e) => {
         if(e.currentTarget === e.target) {
-            this.props.onClose();
+            onClose();
         }
     }
 
-filtered = this.props.images.filter(({ id }) => id === this.props.selectedId);
+    const filtered = images.filter(({ id }) => id === selectedId);
 
-render() {
-return createPortal(
-<Overlay className="Overlay" onClick={this.onClickBackdrop}>
-  <ModalStyled className="Modal">
-    <img src={this.filtered[0].largeImageURL} alt={this.filtered[0].tags} />
-  </ModalStyled>
-</Overlay>, modalRoot,
+    return createPortal(
+        <Overlay className="Overlay" onClick={onClickBackdrop}>
+        <ModalStyled className="Modal">
+            <img src={filtered[0].largeImageURL} alt={filtered[0].tags} />
+        </ModalStyled>
+        </Overlay>, modalRoot,
 
-)}}
+)}
